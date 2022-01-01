@@ -1,36 +1,18 @@
-const { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes } = require("./iss");
+const { nextISSTimesForMyLocation } = require("./iss");
 
-// Async call to fetch the user's current IP address
-fetchMyIP((error, ip) => {
+// Function to make several API calls to locate the user's current location and return the next 5 fly over times of the ISS
+nextISSTimesForMyLocation((error, flyOverTimes) => {
+  // Check for an error, output to the console, and quit the program
   if (error) {
     console.log(`Error: ${error}`);
     return;
   }
 
-  // Ouput the IP address to the console
-  console.log('It worked! Returned IP: ', ip);
-
-  // Async call to fetch the user's latitude and longitude from their IP address
-  fetchCoordsByIP(ip, (error, coords) => {
-    if (error) {
-      console.log(`Error: ${error}`);
-      return;
-    }
-
-    // Output the user's current coordinates
-    console.log(`You are located at: ${coords.latitude} latitude and ${coords.longitude}`);
-
-    // Async call to fetch the next 5 ISS Fly Over Times in relation the user's location coordinates
-    fetchISSFlyOverTimes(coords, (error, issFlyOverData) => {
-      if (error) {
-        console.log(`Error: ${error}`);
-        return;
-      }
-
-      // Output the next 5 fly over times to the console
-      for (const element of issFlyOverData) {
-        console.log(`The next 5 ISS Fly Over Times are: ${element.risetime} for ${element.duration}ms`);
-      }
-    });
-  });
+  // Output the retrieved Fly Over Times to the console
+  for (const time of flyOverTimes) {
+    const dateAndTime = new Date(0);
+    dateAndTime.setUTCSeconds(time.risetime); // Convert to UTC time
+    const duration = time.duration;
+    console.log(`Next pass at ${dateAndTime} for ${duration} seconds!`);
+  }
 });
