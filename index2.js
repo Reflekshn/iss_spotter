@@ -5,4 +5,7 @@ const { printISSPassTimes } = require('./printISSPassTimes');
 nextISSTimesForMyLocation()
   .then((flyOverTimes) => {
     printISSPassTimes(flyOverTimes);
+  })
+  .catch((error) => {
+    console.log(`Error: ${error.message}`);
   });
